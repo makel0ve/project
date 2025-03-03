@@ -11,7 +11,7 @@ class DBSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file="C:\\programs\\project\\backend\\.env", extra="ignore")
 
     def get_database_url(self):
-        return f"postgresql+asyncpg://{db_settings.DB_USER}:{db_settings.DB_PASS}@{db_settings.DB_HOST}:{db_settings.DB_PORT}/{db_settings.DB_NAME}"
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     
     
 db_settings = DBSettings()

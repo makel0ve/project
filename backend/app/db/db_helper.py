@@ -1,4 +1,5 @@
 from fastapi import Depends
+from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
@@ -18,8 +19,16 @@ async def get_db():
         yield session
 
 
-async def add_data_db(db: AsyncSession, hashid: str, end_life: str, text: str = None, url: str = None):
-    new_paste = Paste(hashid=hashid, end_life=end_life, text=text, url=url)
+async def add_data_db(db: AsyncSession, hashid: str, end_life: str, text: str = None):
+    new_paste = Paste(hashid=hashid, end_life=end_life, text=text)
     db.add(new_paste)
     await db.commit()
     
+    
+async def get_data_db(db: AsyncSession, hashid: str):
+    result = await db.execute(
+        select(Paste).where(Paste.hashid == hashid).limit(1)
+    )
+    paste = result.scalars().first()
+    
+    return paste
