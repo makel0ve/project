@@ -1,5 +1,4 @@
-from fastapi import Depends
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
@@ -32,3 +31,10 @@ async def get_data_db(db: AsyncSession, hashid: str):
     paste = result.scalars().first()
     
     return paste
+
+
+async def delete_data(db: AsyncSession, hashid: str):
+    await db.execute(
+        delete(Paste).where(Paste.hashid == hashid)
+    )
+    
