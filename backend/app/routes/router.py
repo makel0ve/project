@@ -20,9 +20,11 @@ async def root(
     s3 = Depends(get_session_s3)
 ):
     data = await get_data_db(db=db, hashid=hashid)
-    text = await get_data_from_file(s3=s3, hashid=hashid)
     
-    return {"message": "Hello World", "data": data, "text": text}
+    if not data.text:
+        data.text = await get_data_from_file(s3=s3, hashid=hashid)
+    
+    return {"message": "Hello World", "data": data}
 
 
 @router.post('/')
@@ -39,3 +41,5 @@ async def add_paste(
         await add_data_db(db=db, hashid=hashid, end_life=end_life)
     else:
         await add_data_db(db=db, hashid=hashid, text=text, end_life=end_life)
+        
+    return {"hashid": hashid}
